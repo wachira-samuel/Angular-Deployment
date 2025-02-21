@@ -29,13 +29,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-<<<<<<< HEAD
       - name: Setup Nodejs
         uses: actions/setup-node@v4
-=======
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
->>>>>>> 70b768db1ba150eddb25dafcbe9236bd379639e4
         with:
           node-version: "18.x"
 
