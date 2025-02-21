@@ -45,19 +45,29 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Application checkout
+      - name: Get Code
         uses: actions/checkout@v4
 
-      - name: Download artifacts
+      - name: Get artifacts
         uses: actions/download-artifact@v4
         with:
           name: dist-files
           path: ./dist
 
       - name: List downloaded artifacts
-        run: ls -R ./dist
+        run: ls
+      - name: Deploy Application
+        id: deploy
+        uses: ./github/actions/deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      
+        with:
+          bucket-name: ng-learn-app
+          source: ./dist
+
+
 
 
 
