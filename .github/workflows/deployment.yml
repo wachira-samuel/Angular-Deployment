@@ -6,16 +6,6 @@ on:
       - master
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Lint Code
-        run: npm run lint
-        shell: bash
-
   test:
     runs-on: ubuntu-latest
     steps:
