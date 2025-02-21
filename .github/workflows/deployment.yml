@@ -29,8 +29,11 @@ jobs:
       - name: Appplication checkout
         uses: actions/checkout@v4
 
+      - name: Install Angular CLI Globally
+        run: npm install -g @angular/cli
+
       - name: Build Application
-        run: npm run build --configuration production
+        run: ng build --configuration production
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
