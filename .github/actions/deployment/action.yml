@@ -1,0 +1,20 @@
+name: "Deploy to S3 Bucket"
+description: "Deploy to S3 Bucket using JavaScript"
+inputs:
+  bucketName:
+    description: The name of the S3 Bucket
+    required: true
+
+  bucketRegion:
+    description: The region of the S3 bucket
+    required: false
+    default: eu-east-1
+
+  distFiles:
+    description: The files we got from executing the build step
+outputs:
+  URL:
+    description: This is the website/apps URL
+runs:
+  using: "node20"
+  main: "index.js"

@@ -21,12 +21,12 @@ jobs:
       - name: Test Code
         id: test
         run: npm run test
-      # - name: Upload Test Report
-        # if: failure() && steps.test.outputs == 'failure'
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: test-report
-      #     path: test.json
+      - name: Upload Test Report
+        if: failure() && steps.test.outputs == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test.json
 
   build:
     needs: test
@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Cache Dependencies
-        uses: ./.github/action/cache_dep
+        uses: ./.github/actions/cache_dependencies
 
       - name: Build the App
         run: npm run build
@@ -61,10 +61,10 @@ jobs:
 
       - name: Deploy App
         id: deploy
-        uses: ./.github/action/deployment
+        uses: ./.github/actions/deployment
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
         with:
           bucket-name: ng-learn-app
           source: ./dist/angular-app/browser
