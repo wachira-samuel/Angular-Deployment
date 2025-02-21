@@ -35,8 +35,8 @@ jobs:
       - name: Get Code
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        uses: ./.github/actions/cache_dependencies
+      - name: Install Cache Dependencies
+        uses: ./.github/action/cache_dep
 
       - name: Build the App
         run: npm run build
@@ -61,16 +61,16 @@ jobs:
 
       - name: Deploy App
         id: deploy
-        uses: ./.github/actions/deploy
+        uses: ./.github/action/deployment
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
           bucket-name: ng-learn-app
-          source: ./dist/ANGULAR-APP/browser
+          source: ./dist/angular-app/browser
       - name: Website URL
         run: |
-          echo "Website URL: ${{ steps.deploy.outputs.website_url }}"
+          echo "${{ steps.deploy.outputs.website_url }}"
 
 
 
