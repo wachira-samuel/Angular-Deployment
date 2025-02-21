@@ -33,7 +33,7 @@ jobs:
         run: npm install -g @angular/cli
 
       - name: Build Application
-        run: ng build --configuration production
+        run: npm install --configuration production
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
