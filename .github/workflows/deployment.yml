@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Cache Dependencies
-        uses: ./.github/actions/cache_dependencies
+        uses: ./.github/actions/cache_dependencies/action.yml
 
       - name: Build the App
         run: npm run build
@@ -61,7 +61,7 @@ jobs:
 
       - name: Deploy App
         id: deploy
-        uses: ./.github/actions/deployment
+        uses: ./.github/actions/deployment/action.yml
         env:
           AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
