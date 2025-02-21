@@ -54,8 +54,6 @@ jobs:
           name: dist-files
           path: ./dist
 
-      - name: List downloaded artifacts
-        run: ls
       - name: Deploy Application
         id: deploy
         uses: ./github/actions/deploy
