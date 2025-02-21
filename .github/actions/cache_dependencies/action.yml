@@ -2,15 +2,17 @@ name: Cache Dependencies action
 description: Setup and cache dependencies for faster builds
 runs:
   using: "composite"
-  steps:
-    - name: Cache Dependencies
-      id: cache
-      uses: actions/cache@v4
-      with:
-        path: node_modules
-        key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+  inputs:
+  cache-path:
+    description: 'Path to cached dependencies'
+    required: true
+    default: './node_modules'
 
-    - name: Install Dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: npm ci
+runs:
+  using: "composite"
+  steps:
+    - name: Install dependencies
+      run: |
+        echo "Installing dependencies..."
+        npm ci
       shell: bash
