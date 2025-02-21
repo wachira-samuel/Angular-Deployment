@@ -11,36 +11,41 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Appplication checkout
+      - name: Get Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18.x'
+      - name: Cache and Install Dependencies
+        id: cache-dependencies
+        uses: ./.github/actions/cache_dependencies
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Test Code
+        id: test
+        run: npm run test
+      # - name: Upload Test Report
+        # if: failure() && steps.test.outputs == 'failure'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: test-report
+      #     path: test.json
 
   build:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Appplication checkout
+      - name: Get Code
         uses: actions/checkout@v4
 
-      - name: Install Angular CLI Globally
-        run: npm install -g @angular/cli
+      - name: Install Dependencies
+        uses: ./.github/actions/cache_dependencies
 
-      - name: Build Application
-        run: npm install --configuration production
+      - name: Build the App
+        run: npm run build
 
-      - name: Upload artifacts
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist-files
           path: dist
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -48,22 +53,24 @@ jobs:
       - name: Get Code
         uses: actions/checkout@v4
 
-      - name: Get build artifacts
+      - name: Get Previously Built Artifact
         uses: actions/download-artifact@v4
         with:
           name: dist-files
           path: ./dist
 
-      - name: Deploy Application
+      - name: Deploy App
         id: deploy
-        uses: ./github/actions/deploy
+        uses: ./.github/actions/deploy
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
         with:
           bucket-name: ng-learn-app
-          source: ./dist
+          source: ./dist/ANGULAR-APP/browser
+      - name: Website URL
+        run: |
+          echo "Website URL: ${{ steps.deploy.outputs.website_url }}"
 
 
 
