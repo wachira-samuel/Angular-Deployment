@@ -1,8 +1,7 @@
-name: Cache Dependencies action
-description: Setup and cache dependencies for faster builds
-runs:
-  using: "composite"
-  inputs:
+name: Cache Dependencies
+description: Caches node_modules for faster builds
+
+inputs:
   cache-path:
     description: 'Path to cached dependencies'
     required: true
@@ -13,6 +12,6 @@ runs:
   steps:
     - name: Install dependencies
       run: |
-        echo "Installing dependencies..."
+        echo "Installing dependencies"
         npm ci
       shell: bash

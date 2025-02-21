@@ -6,21 +6,37 @@ on:
       - master
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Lint Code
+        run: npm run lint
+        shell: bash
+
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18.x"
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
-      - name: Run test
-        uses: ./.github/actions/cache_dependencies
+        shell: bash
 
+      - name: Run Tests
+        id: run-tests
+        run: npm run test
+        shell: bash
+
+      - name: Upload Test Report
+        if: failure() && steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test.json
 
   build:
     needs: test
@@ -29,34 +45,43 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Nodejs
-        uses: actions/setup-node@v4
+      - name: Install Dependencies
+        run: npm ci
+        shell: bash
+
+      - name: Build Angular App
+        run: npm run build --configuration production
+        shell: bash
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: dist/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
-          node-version: "18.x"
+          name: dist-files
+          path: ./dist
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        run: npm run build -- --configuration=production
-      - name: Upload Artifacts
-        uses: actions/upload-artifacts@v4
-        with:
-            name:
-                dist-files
-            path: dist
-
-      - name: Deploy Site
+      - name: Deploy to S3
         id: deploy
         uses: ./.github/actions/deployment
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
-          bucketName: qacohortbucket
+          bucketName: ng-learn-app
           distFiles: ./dist
 
-      - name: Output Deployment URL
-        run: echo "${{ steps.deploy.outputs.URL }}"
+      - name: Output Deployment Link
+        run: "Deployment URL: ${{ steps.deploy.outputs.URL }}"
+        shell: bash
