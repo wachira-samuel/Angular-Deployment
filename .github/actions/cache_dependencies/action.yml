@@ -1,5 +1,5 @@
 name: Cache Dependencies action
-description: This Action will cache Dependencies
+description: Setup and cache dependencies for faster builds
 runs:
   using: "composite"
   steps:
@@ -13,3 +13,4 @@ runs:
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       run: npm ci
+      shell: bash
