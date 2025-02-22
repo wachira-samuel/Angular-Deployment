@@ -18,12 +18,14 @@ jobs:
       - name: Testing Code
         id: test
         run: npm run test
-      - name: Upload Test Report
-        if: failure() && steps.test.outputs == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: test.json
+
+      # - name: Upload Test Report
+      #   if: failure()  # ✅ Simplified condition
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: test-report
+      #     path: test.json  # Ensure this file exists
+
   build:
     needs: test
     runs-on: ubuntu-latest
@@ -42,6 +44,7 @@ jobs:
         with:
           name: dist-files
           path: dist
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -59,10 +62,11 @@ jobs:
         id: deploy-step
         uses: ./.github/actions/deployment
         env:
-          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
           bucketName: first-ng-app
           distFiles: ./dist/angular-app/browser
+
       - name: Website Link
-        run: echo "${{steps.deploy-step.outputs.URL}}"
+        run: echo "${{ steps.deploy-step.outputs.URL }}"  # Ensure `deployment` action sets this output
