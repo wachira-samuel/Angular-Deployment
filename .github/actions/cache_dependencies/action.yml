@@ -1,17 +1,17 @@
-# name: Cache Dependencies
-# description: Caches node_modules for faster builds
+name: Cache Dependencies
+description: Caches node_modules for faster builds
 
-# inputs:
-#   cache-path:
-#     description: 'Path to cached dependencies'
-#     required: true
-#     default: './node_modules'
+inputs:
+  cache-path:
+    description: 'Path to cached dependencies'
+    required: true
+    default: './node_modules'
 
-# runs:
-#   using: "composite"
-#   steps:
-#     - name: Install dependencies
-#       run: |
-#         echo "Installing dependencies"
-#         npm ci
-#       shell: bash
+runs:
+  using: "composite"
+  steps:
+    - name: Install dependencies
+      run: |
+        echo "Installing dependencies"
+        npm ci
+      shell: bash
