@@ -19,13 +19,6 @@ jobs:
         id: test
         run: npm run test
 
-      # - name: Upload Test Report
-      #   if: failure()  # ✅ Simplified condition
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: test-report
-      #     path: test.json  # Ensure this file exists
-
   build:
     needs: test
     runs-on: ubuntu-latest
@@ -69,4 +62,4 @@ jobs:
           distFiles: ./dist/angular-app/browser
 
       - name: Website Link
-        run: echo "${{ steps.deploy-step.outputs.URL }}"  # Ensure `deployment` action sets this output
+        run: echo "${{ steps.deploy-step.outputs.URL }}"  
