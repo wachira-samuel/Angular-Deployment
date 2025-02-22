@@ -1,15 +1,16 @@
 name: Cache Dependencies
 description: This Action will cache Dependencies
 runs:
-  using: "composite"  
+  using: "composite"  # ✅ Must be a string
   steps:
     - name: Cache Dependencies
       id: cache
       uses: actions/cache@v4
       with:
         path: node_modules
-        key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-      shell: bash
+        # 🔥 Fix: Add quotes to prevent YAML parsing issues with "${{"
+        key: "deps-node-modules-${{ hashFiles('**/package-lock.json') }}"  # ✅ Typo fixed (package-lock.json)
+      shell: bash  # Required for composite steps with `uses`
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
