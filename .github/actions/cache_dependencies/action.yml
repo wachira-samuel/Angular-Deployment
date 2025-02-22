@@ -1,7 +1,7 @@
 name: Cache Dependencies
 description: This Action will cache Dependencies
 runs:
-  using: "composite"
+  using: "composite"  
   steps:
     - name: Cache Dependencies
       id: cache
@@ -9,6 +9,7 @@ runs:
       with:
         path: node_modules
         key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+      shell: bash
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
