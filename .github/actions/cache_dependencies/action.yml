@@ -1,17 +1,17 @@
 name: Cache Dependencies
-description: Caches and installs dependencies
+description: Caches dependencies for faster builds
 runs:
-  using: "composite"  # ✅ Must be a mapping with `using` and `steps`
-  steps:
+  using: "composite"   # ✅ Must be a key-value pair
+  steps:               # ✅ Indented under `runs`
     - name: Cache Dependencies
       id: cache
       uses: actions/cache@v4
       with:
         path: node_modules
-        key: "deps-node-modules-${{ hashFiles('**/package-lock.json') }}"
-      shell: bash  # Required for composite steps with `uses`
+        key: "deps-node-modules-${{ hashFiles('**/package-lock.json') }}"  # ✅ Quotes added
+      shell: bash   # ✅ Required for composite steps
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       run: npm ci
-      shell: bash
+      shell: bash   # ✅ Required for composite steps
