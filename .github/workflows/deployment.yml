@@ -15,30 +15,43 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18.x"
-          
+
       - name: Cache and Install Dependencies
         id: cache-dependencies
         uses: ./.github/actions/cache_dependencies
-  # build:
-  #   needs: test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v4
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-  #     - name: Setup Nodejs
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: "18.x"
+      - name: Setup Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
 
-  #     - name: Install dependencies
-  #       run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-  #     - name: Build application
-  #       run: npm run build -- --configuration=production
-  #     - name: Upload Artifacts
-  #       uses: actions/upload-artifacts@v4
-  #       with:
-  #           name:
-  #               dist-files
-  #           path: dist
+      - name: Build application
+        run: npm run build -- --configuration=production
+      - name: Upload Artifacts
+        uses: actions/upload-artifacts@v4
+        with:
+            name:
+                dist-files
+            path: dist
+
+      - name: Deploy App
+        id: deploy-step
+        uses: ./.github/actions/deployment 
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        with:
+          bucketName: ng-learn-app
+          distFiles: ./dist/angular-app/browser
+
+      - name: Website Link
+        run: echo "${{steps.deploy-step.outputs.URL}}"
