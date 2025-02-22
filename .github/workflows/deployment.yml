@@ -15,11 +15,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18.x"
-      - name: Install dependencies
-        run: npm ci
-      - name: Run test
-        uses: actions/cache_dependencies@v4
-
+          
+      - name: Cache and Install Dependencies
+        id: cache-dependencies
+        uses: ./.github/actions/cache_dependencies
   # build:
   #   needs: test
   #   runs-on: ubuntu-latest
