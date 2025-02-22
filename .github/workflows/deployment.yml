@@ -8,58 +8,38 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Get Code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Cache and Install Dependencies
-        id: cache-dependencies
-        uses: ./.github/actions/cache_dependencies
-
-      - name: Testing Code
-        id: test
-        run: npm run test
-
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get Code
-        uses: actions/checkout@v4
-
-      - name: Install Dependencies
-        uses: ./.github/actions/cache_dependencies
-
-      - name: Build the App
-        run: npm run build
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Setup Node js
+        uses: actions/setup-node@v4
         with:
-          name: dist-files
-          path: dist
+          node-version: "18.x"
+      - name: Install dependencies
+        run: npm ci
+      - name: Run test
+        uses: actions/cache_dependencies@v4
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get Code
-        uses: actions/checkout@v4
+  # build:
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
 
-      - name: Get Previously Built Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-files
-          path: ./dist
+  #     - name: Setup Nodejs
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: "18.x"
 
-      - name: Deploy App
-        id: deploy-step
-        uses: ./.github/actions/deployment
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        with:
-          bucketName: first-ng-app
-          distFiles: ./dist/angular-app/browser
+  #     - name: Install dependencies
+  #       run: npm ci
 
-      - name: Website Link
-        run: echo "${{ steps.deploy-step.outputs.URL }}"  
+  #     - name: Build application
+  #       run: npm run build -- --configuration=production
+  #     - name: Upload Artifacts
+  #       uses: actions/upload-artifacts@v4
+  #       with:
+  #           name:
+  #               dist-files
+  #           path: dist
